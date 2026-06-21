@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinanceAI Dashboard</title>
+  <title>Momna Imtiaz — Finance Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -62,7 +62,6 @@
 
     const fmt = (n) => 'PKR ' + Number(n).toLocaleString('en-PK', { maximumFractionDigits: 0 });
 
-    // SVG Donut Chart Component using clean SVG properties
     function DynamicDonutChart({ breakdown }) {
       const total = Object.values(breakdown).reduce((sum, c) => sum + c.amount, 0);
       let accumulatedAngle = 0;
@@ -101,7 +100,6 @@
             </div>
           </div>
 
-          {/* Legend indicator list */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-4 w-full text-[11px]">
             {Object.keys(breakdown).map((key) => {
               const cat = breakdown[key];
@@ -123,7 +121,7 @@
 
     function Chatbot({ totalSpent }) {
       const [messages, setMessages] = useState([
-        { text: "Hi Momna! I'm your AI finance coach. Ask me about your spending, budgets, or forecasts.", isBot: true }
+        { text: "Hi Momna! I'm your personalized finance coach. Ask me about your spending, budgets, or forecasts.", isBot: true }
       ]);
       const [input, setInput] = useState("");
 
@@ -149,7 +147,7 @@
           <div className="border-b border-slate-800/60 pb-2 mb-3">
             <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              AI Coach
+              Momna Imtiaz AI
             </h3>
             <p className="text-[10px] text-slate-400">Financial coach assistant</p>
           </div>
@@ -177,7 +175,6 @@
     function App() {
       const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
       const [categoryBreakdown, setCategoryBreakdown] = useState(() => {
-        // Hydrate default breakdown metrics initially
         const current = { ...INITIAL_CATEGORY_BREAKDOWN };
         INITIAL_EXPENSES.forEach(exp => {
           if (current[exp.category]) current[exp.category].amount += exp.amount;
@@ -208,7 +205,6 @@
 
         setExpenses([newExp, ...expenses]);
         
-        // Dynamic update matching real state mutation framework
         setCategoryBreakdown(prev => {
           const updated = { ...prev };
           if (updated[category]) {
@@ -225,25 +221,19 @@
 
       return (
         <div className="min-h-screen bg-[#0b1329] text-slate-200">
-          {/* Top Navbar Header */}
           <header className="border-b border-slate-800/60 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-white text-sm">FI</div>
+              <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-white text-sm">MI</div>
               <div>
-                <h1 className="text-base font-bold text-white tracking-tight">FinanceAI Dashboard</h1>
-                <p className="text-xs text-slate-400">Momna Imtiaz — expense tracking</p>
+                <h1 className="text-base font-bold text-white tracking-tight">Momna Imtiaz Dashboard</h1>
+                <p className="text-xs text-slate-400">Personal finance & expense tracking</p>
               </div>
             </div>
             <button className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-md font-medium">Review</button>
           </header>
 
-          {/* Dashboard Main Grid Area Layout */}
           <main className="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
-            
-            {/* Left Main Dashboard Blocks */}
             <div className="lg:col-span-2 space-y-6">
-              
-              {/* Profile Context Forecast */}
               <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-5 text-center sm:text-left">
                 <div className="flex flex-col sm:flex-row items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-sm text-white">MI</div>
@@ -264,7 +254,6 @@
                 <p className="text-[11px] text-slate-400 mt-3">Spending aligned with your PKR 85,000/mo budget plan. Forecast trend remains fully stable.</p>
               </div>
 
-              {/* Status Report Counters */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-[#131c35] border border-slate-800/80 p-4 rounded-xl">
                   <p className="text-[11px] text-slate-400 uppercase font-medium tracking-wider">Total Spent</p>
@@ -283,10 +272,7 @@
                 </div>
               </div>
 
-              {/* Data Mutation Actions Layout Grid split */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Form Wrapper Panel */}
                 <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-5">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Add Expense</h3>
                   <form onSubmit={handleAddExpense} className="space-y-3">
@@ -330,7 +316,6 @@
                   </p>
                 </div>
 
-                {/* History Logger View Container */}
                 <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-5 flex flex-col h-[245px]">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Recent Expenses</h3>
                   <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin pr-1">
@@ -350,19 +335,14 @@
                     })}
                   </div>
                 </div>
-
               </div>
 
-              {/* Dynamic Categorized Breakdown Visual Donut Chart render */}
               <DynamicDonutChart breakdown={categoryBreakdown} />
-
             </div>
 
-            {/* Sidebar Module Right */}
             <div className="lg:col-span-1">
               <Chatbot totalSpent={totalSpent} />
             </div>
-
           </main>
         </div>
       );
