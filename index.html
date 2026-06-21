@@ -1,360 +1,501 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Momna Imtiaz — Finance Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
-          },
-          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-        },
-      },
-    };
-  </script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b1329; }
-    .scrollbar-thin::-webkit-scrollbar { width: 5px; }
-  app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://70146494-m6.github.io",  # Aapka GitHub Pages origin
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanceAI — Multi-Agent Personal Finance Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1B2D;
+    --panel:#16243B;
+    --panel-2:#1C2D47;
+    --line:#26385A;
+    --mint:#3DDC97;
+    --mint-dim:#2A9C6B;
+    --amber:#F4A93B;
+    --rose:#E8607A;
+    --text:#F5F7FA;
+    --text-dim:#C4CDDA;
+    --text-faint:#7C8AA3;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:28px 20px 60px;}
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+  header.top{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:28px; flex-wrap:wrap; gap:12px;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand .mark{
+    width:38px; height:38px; border-radius:10px;
+    background:linear-gradient(135deg, var(--mint), #2C8FE0);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif; font-weight:700; color:#0F1B2D; font-size:15px;
+  }
+  .brand h1{font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:600; letter-spacing:-0.01em;}
+  .brand p{font-size:12.5px; color:var(--text-faint); margin-top:1px;}
+  .user-chip{
+    display:flex; align-items:center; gap:9px;
+    background:var(--panel); border:1px solid var(--line);
+    padding:7px 14px 7px 7px; border-radius:30px; font-size:13px;
+  }
+  .user-chip .av{
+    width:28px; height:28px; border-radius:50%;
+    background:linear-gradient(135deg,#7C6FE0,#3DDC97);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700; color:#0F1B2D;
+  }
+  .user-chip .meta{line-height:1.25;}
+  .user-chip .name{font-weight:600; font-size:13px;}
+  .user-chip .sub{font-size:11px; color:var(--text-faint);}
 
-    const MONTHLY_BUDGET = 85000;
+  .pipeline{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px 24px 18px;
+    margin-bottom:22px;
+    overflow:hidden;
+    position:relative;
+  }
+  .pipeline-label{
+    font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text-faint); font-weight:600; margin-bottom:16px;
+  }
+  .pipe-row{
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative;
+  }
+  .node{
+    flex:1; display:flex; flex-direction:column; align-items:center;
+    gap:8px; position:relative; z-index:2;
+  }
+  .node .dot{
+    width:46px; height:46px; border-radius:50%;
+    background:var(--panel-2); border:2px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; transition:all .4s ease;
+  }
+  .node.active .dot{
+    border-color:var(--mint);
+    box-shadow:0 0 0 5px rgba(61,220,151,0.12), 0 0 18px rgba(61,220,151,0.35);
+    background:rgba(61,220,151,0.08);
+  }
+  .node .label{font-size:11.5px; font-weight:600; color:var(--text-dim); text-align:center;}
+  .node.active .label{color:var(--mint);}
+  .node .sub{font-size:10px; color:var(--text-faint); text-align:center; max-width:100px;}
+  .pipe-line{
+    position:absolute; top:23px; left:5%; right:5%; height:2px;
+    background:var(--line); z-index:1;
+  }
+  .pipe-line-fill{
+    position:absolute; top:0; left:0; height:100%; width:0%;
+    background:linear-gradient(90deg, var(--mint), var(--mint-dim));
+    transition:width 1.1s ease;
+  }
+  .pipeline-status{
+    margin-top:16px; font-size:12px; color:var(--text-faint);
+    display:flex; align-items:center; gap:7px;
+  }
+  .pipeline-status .blink{
+    width:7px; height:7px; border-radius:50%; background:var(--mint);
+    animation:blink 1.4s infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
 
-    const INITIAL_CATEGORY_BREAKDOWN = {
-      housing: { label: 'Housing', amount: 35000, color: '#f43f5e', bg: 'bg-rose-500/10' },
-      utilities: { label: 'Utilities', amount: 15000, color: '#06b6d4', bg: 'bg-cyan-500/10' },
-      food: { label: 'Food', amount: 12000, color: '#eab308', bg: 'bg-yellow-500/15' },
-      transport: { label: 'Transport', amount: 6000, color: '#0ea5e9', bg: 'bg-sky-500/10' },
-      health: { label: 'Health', amount: 3000, color: '#10b981', bg: 'bg-emerald-500/10' },
-      shopping: { label: 'Shopping', amount: 1400, color: '#ec4899', bg: 'bg-pink-500/10' },
-      other: { label: 'Other', amount: 0, color: '#64748b', bg: 'bg-slate-500/10' }
-    };
+  .grid{display:grid; grid-template-columns:1.55fr 1fr; gap:20px;}
+  @media (max-width:880px){.grid{grid-template-columns:1fr;}}
 
-    const INITIAL_EXPENSES = [
-      { id: 1, amount: 2500, category: 'food', description: 'Weekly groceries', date: '2026-06-02' },
-      { id: 2, amount: 4500, category: 'transport', description: 'Petrol — fill-up', date: '2026-06-01' },
-      { id: 3, amount: 35000, category: 'housing', description: 'Rent payment', date: '2026-05-30' },
-      { id: 4, amount: 9500, category: 'utilities', description: 'Electric bill', date: '2026-05-28' },
-    ];
+  .card{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:20px 20px 18px; margin-bottom:18px;
+  }
+  .card h2{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600; margin-bottom:14px;}
+  .card .eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-faint); font-weight:600; margin-bottom:4px;}
 
-    const PREDICTIONS = [
-      { month: 'Jul 2026', status: 'Forecast Stable' },
-      { month: 'Aug 2026', status: 'Forecast Stable' },
-      { month: 'Sep 2026', status: 'Forecast Stable' },
-    ];
+  .stat-row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:18px;}
+  @media (max-width:600px){.stat-row{grid-template-columns:1fr;}}
+  .stat{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:16px 18px;
+  }
+  .stat .eyebrow{font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-faint); font-weight:600;}
+  .stat .value{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; margin-top:6px;}
+  .stat .delta{font-size:11.5px; margin-top:4px; color:var(--text-faint);}
+  .stat.headroom .value{color:var(--mint);}
+  .stat.avg .value{color:var(--amber);}
 
-    const fmt = (n) => 'PKR ' + Number(n).toLocaleString('en-PK', { maximumFractionDigits: 0 });
+  .forecast-bars{display:flex; justify-content:space-between; gap:14px; margin:18px 0 14px; align-items:flex-end; height:120px;}
+  .fbar{flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; gap:8px;}
+  .fbar .amt{font-size:11.5px; color:var(--text-dim); font-weight:600;}
+  .fbar .bar{width:60%; max-width:46px; background:linear-gradient(180deg, var(--mint), var(--mint-dim)); border-radius:6px 6px 3px 3px;}
+  .fbar .month{font-size:11px; color:var(--text-faint);}
+  .forecast-note{
+    background:rgba(61,220,151,0.08); border:1px solid rgba(61,220,151,0.25);
+    border-radius:10px; padding:10px 14px; font-size:12.5px; color:var(--mint);
+  }
 
-    function DynamicDonutChart({ breakdown }) {
-      const total = Object.values(breakdown).reduce((sum, c) => sum + c.amount, 0);
-      let accumulatedAngle = 0;
+  .donut-wrap{display:flex; gap:20px; align-items:center; flex-wrap:wrap;}
+  svg.donut{flex-shrink:0;}
+  .legend{flex:1; min-width:160px;}
+  .legend-row{display:flex; align-items:center; justify-content:space-between; padding:6px 0; font-size:13px; border-bottom:1px solid var(--line);}
+  .legend-row:last-child{border-bottom:none;}
+  .legend-row .lkey{display:flex; align-items:center; gap:8px;}
+  .legend-row .sw{width:10px; height:10px; border-radius:3px; flex-shrink:0;}
+  .legend-row .lval{color:var(--text-dim); font-weight:600;}
 
-      return (
-        <div className="flex flex-col items-center justify-center p-2 bg-[#131c35] border border-slate-800/80 rounded-xl">
-          <h3 className="text-xs font-bold uppercase text-slate-400 mb-4 self-start">By Category</h3>
-          <div className="relative w-36 h-36 flex items-center justify-center">
-            <svg viewBox="0 0 40 40" className="w-full h-full transform -rotate-90">
-              {Object.keys(breakdown).map((key) => {
-                const cat = breakdown[key];
-                if (cat.amount === 0 || total === 0) return null;
-                const percentage = (cat.amount / total) * 100;
-                const strokeDasharray = `${percentage} ${100 - percentage}`;
-                const strokeDashoffset = -accumulatedAngle;
-                accumulatedAngle += percentage;
+  .expense-row{display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--line);}
+  .expense-row:last-child{border-bottom:none;}
+  .expense-row .ename{font-size:13.5px; font-weight:500;}
+  .expense-row .etag{
+    display:inline-block; font-size:10px; padding:2px 8px; border-radius:20px;
+    margin-top:4px; font-weight:600;
+  }
+  .expense-row .eamt{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px;}
 
-                return (
-                  <circle
-                    key={key}
-                    cx="20"
-                    cy="20"
-                    r="15.91549430918954"
-                    fill="transparent"
-                    stroke={cat.color}
-                    strokeWidth="5"
-                    strokeDasharray={strokeDasharray}
-                    strokeDashoffset={strokeDashoffset}
-                  />
-                );
-              })}
-            </svg>
-            <div className="absolute text-center">
-              <p className="text-[10px] uppercase text-slate-400 font-semibold tracking-wider">Total</p>
-              <p className="text-xs font-bold text-white">{fmt(total)}</p>
-            </div>
-          </div>
+  .field{margin-bottom:13px;}
+  .field label{display:block; font-size:11.5px; color:var(--text-faint); margin-bottom:6px; font-weight:600;}
+  .field input, .field select{
+    width:100%; background:var(--panel-2); border:1px solid var(--line);
+    color:var(--text); padding:10px 12px; border-radius:9px; font-size:13.5px; font-family:'Inter',sans-serif;
+  }
+  .field input:focus, .field select:focus{outline:none; border-color:var(--mint);}
+  .btn{
+    width:100%; background:var(--mint); color:#0F1B2D; border:none;
+    padding:11px; border-radius:9px; font-weight:700; font-size:13.5px;
+    cursor:pointer; font-family:'Inter',sans-serif; transition:opacity .15s;
+  }
+  .btn:hover{opacity:0.88;}
+  .budget-left{font-size:12px; color:var(--text-faint); margin-top:10px; text-align:center;}
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-4 w-full text-[11px]">
-            {Object.keys(breakdown).map((key) => {
-              const cat = breakdown[key];
-              if (cat.amount === 0) return null;
-              return (
-                <div key={key} className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: cat.color }}></span>
-                    <span className="text-slate-300 truncate">{cat.label}</span>
-                  </div>
-                  <span className="text-slate-400 font-medium ml-1">{fmt(cat.amount)}</span>
-                </div>
-              );
-            })}
-          </div>
+  .coach-card{display:flex; flex-direction:column; height:560px;}
+  .coach-head{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .coach-head .av{
+    width:32px; height:32px; border-radius:9px;
+    background:linear-gradient(135deg,#2C8FE0,var(--mint));
+    display:flex; align-items:center; justify-content:center; font-size:15px;
+  }
+  .coach-head .htxt h2{margin-bottom:0;}
+  .coach-head .htxt p{font-size:11px; color:var(--text-faint);}
+  .chat-scroll{flex:1; overflow-y:auto; padding-right:4px; margin-bottom:12px;}
+  .msg{margin-bottom:12px; max-width:88%; font-size:13.5px; line-height:1.45; padding:10px 13px; border-radius:12px;}
+  .msg.bot{background:var(--panel-2); border:1px solid var(--line); border-bottom-left-radius:4px;}
+  .msg.user{background:var(--mint); color:#0F1B2D; margin-left:auto; border-bottom-right-radius:4px; font-weight:500;}
+  .msg.thinking{color:var(--text-faint); font-style:italic;}
+  .quick-row{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px;}
+  .quick{
+    background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim);
+    font-size:11.5px; padding:7px 11px; border-radius:20px; cursor:pointer; transition:.15s;
+  }
+  .quick:hover{border-color:var(--mint); color:var(--mint);}
+  .chat-input-row{display:flex; gap:8px;}
+  .chat-input-row input{
+    flex:1; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    padding:11px 13px; border-radius:9px; font-size:13.5px; font-family:'Inter',sans-serif;
+  }
+  .chat-input-row input:focus{outline:none; border-color:var(--mint);}
+  .send-btn{
+    background:var(--mint); color:#0F1B2D; border:none; padding:0 18px;
+    border-radius:9px; font-weight:700; font-size:13px; cursor:pointer;
+  }
+  .send-btn:disabled{opacity:0.4; cursor:default;}
+
+  footer{text-align:center; margin-top:30px; font-size:11.5px; color:var(--text-faint);}
+  footer a{color:var(--text-faint);}
+
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:var(--line); border-radius:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="mark">Rs</div>
+      <div>
+        <h1>FinanceAI Dashboard</h1>
+        <p>Multi-agent expense tracking &amp; coaching</p>
+      </div>
+    </div>
+    <div class="user-chip">
+      <div class="av">MI</div>
+      <div class="meta">
+        <div class="name">Momna Imtiaz</div>
+        <div class="sub">PKR 85,000/mo budget</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="pipeline">
+    <div class="pipeline-label">Live agent pipeline</div>
+    <div class="pipe-row">
+      <div class="pipe-line"><div class="pipe-line-fill" id="pipeFill"></div></div>
+      <div class="node" data-n="0"><div class="dot">🔗</div><div class="label">Aggregation</div><div class="sub">Syncs accounts</div></div>
+      <div class="node" data-n="1"><div class="dot">🗂️</div><div class="label">Budget</div><div class="sub">Categorizes spend</div></div>
+      <div class="node" data-n="2"><div class="dot">🎯</div><div class="label">Savings</div><div class="sub">Sets goals</div></div>
+      <div class="node" data-n="3"><div class="dot">📈</div><div class="label">Investment</div><div class="sub">Recommends portfolio</div></div>
+      <div class="node" data-n="4"><div class="dot">🔔</div><div class="label">Alert</div><div class="sub">Flags anomalies</div></div>
+    </div>
+    <div class="pipeline-status"><span class="blink"></span><span id="pipeStatus">Aggregation Agent syncing accounts…</span></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="eyebrow">Total (30 days)</div>
+      <div class="value">PKR 72,400</div>
+      <div class="delta">6 transactions</div>
+    </div>
+    <div class="stat avg">
+      <div class="eyebrow">Monthly average</div>
+      <div class="value">PKR 72,400</div>
+      <div class="delta">vs PKR 85,000 budget</div>
+    </div>
+    <div class="stat headroom">
+      <div class="eyebrow">Budget headroom</div>
+      <div class="value">PKR 12,600</div>
+      <div class="delta">of PKR 85,000 budget</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Spending forecast — Investment &amp; Savings Agents</h2>
+        <div class="forecast-bars">
+          <div class="fbar"><div class="amt">PKR 78k</div><div class="bar" style="height:72%"></div><div class="month">Jul 2026</div></div>
+          <div class="fbar"><div class="amt">PKR 82k</div><div class="bar" style="height:84%"></div><div class="month">Aug 2026</div></div>
+          <div class="fbar"><div class="amt">PKR 85k</div><div class="bar" style="height:96%"></div><div class="month">Sep 2026</div></div>
         </div>
-      );
-    }
+        <div class="forecast-note">Spending aligned with your PKR 85,000/mo budget. Forecast trend: stable.</div>
+      </div>
 
-    function Chatbot({ totalSpent }) {
-      const [messages, setMessages] = useState([
-        { text: "Hi Momna! I'm your personalized finance coach. Ask me about your spending, budgets, or forecasts.", isBot: true }
-      ]);
-      const [input, setInput] = useState("");
-
-      const handleSend = (e) => {
-        e.preventDefault();
-        if (!input.trim()) return;
-
-        const userMessages = [...messages, { text: input, isBot: false }];
-        setMessages(userMessages);
-        setInput("");
-
-        setTimeout(() => {
-          let reply = "Your trends look stable! Keep tracking daily inputs to maintain full control over your dynamic PKR 85,000 allowance layout.";
-          if (totalSpent > MONTHLY_BUDGET * 0.75) {
-            reply = "Heads up! You have utilized a major portion of your budget allocation. I recommend curbing non-essential spending.";
-          }
-          setMessages([...userMessages, { text: reply, isBot: true }]);
-        }, 800);
-      };
-
-      return (
-        <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-4 flex flex-col h-[480px]">
-          <div className="border-b border-slate-800/60 pb-2 mb-3">
-            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Momna Imtiaz AI
-            </h3>
-            <p className="text-[10px] text-slate-400">Financial coach assistant</p>
-          </div>
-          <div className="flex-1 overflow-y-auto space-y-3 mb-3 scrollbar-thin pr-1">
-            {messages.map((m, i) => (
-              <div key={i} className={`p-3 rounded-xl text-xs max-w-[85%] leading-relaxed ${m.isBot ? 'bg-[#1e293b] text-slate-200 self-start' : 'bg-emerald-600 text-white ml-auto'}`}>
-                {m.text}
-              </div>
-            ))}
-          </div>
-          <form onSubmit={handleSend} className="flex gap-2 mt-auto">
-            <input 
-              type="text" 
-              value={input} 
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask your coach..." 
-              className="flex-1 bg-[#0b1329] border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
-            />
-            <button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">Send</button>
-          </form>
+      <div class="card">
+        <h2>Expenses breakdown — Budget Agent</h2>
+        <div class="donut-wrap">
+          <svg class="donut" width="170" height="170" viewBox="0 0 170 170" id="donutSvg"></svg>
+          <div class="legend" id="legendBox"></div>
         </div>
-      );
-    }
+      </div>
 
-    function App() {
-      const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
-      const [categoryBreakdown, setCategoryBreakdown] = useState(() => {
-        const current = { ...INITIAL_CATEGORY_BREAKDOWN };
-        INITIAL_EXPENSES.forEach(exp => {
-          if (current[exp.category]) current[exp.category].amount += exp.amount;
-          else current.other.amount += exp.amount;
-        });
-        return current;
-      });
+      <div class="card">
+        <h2>Recent expenses</h2>
+        <div id="recentExpenses"></div>
+      </div>
+    </div>
 
-      const [amount, setAmount] = useState("");
-      const [category, setCategory] = useState("food");
-      const [description, setDescription] = useState("");
-
-      const totalSpent = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-      const headroom = MONTHLY_BUDGET - totalSpent;
-
-      const handleAddExpense = (e) => {
-        e.preventDefault();
-        if (!amount || !description) return;
-        
-        const addedAmount = Number(amount);
-        const newExp = {
-          id: Date.now(),
-          amount: addedAmount,
-          category: category,
-          description: description,
-          date: '2026-06-21'
-        };
-
-        setExpenses([newExp, ...expenses]);
-        
-        setCategoryBreakdown(prev => {
-          const updated = { ...prev };
-          if (updated[category]) {
-            updated[category].amount += addedAmount;
-          } else {
-            updated.other.amount += addedAmount;
-          }
-          return updated;
-        });
-
-        setAmount("");
-        setDescription("");
-      };
-
-      return (
-        <div className="min-h-screen bg-[#0b1329] text-slate-200">
-          <header className="border-b border-slate-800/60 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-white text-sm">MI</div>
-              <div>
-                <h1 className="text-base font-bold text-white tracking-tight">Momna Imtiaz Dashboard</h1>
-                <p className="text-xs text-slate-400">Personal finance & expense tracking</p>
-              </div>
-            </div>
-            <button className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-md font-medium">Review</button>
-          </header>
-
-          <main className="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-5 text-center sm:text-left">
-                <div className="flex flex-col sm:flex-row items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-sm text-white">MI</div>
-                  <div>
-                    <h2 className="text-sm font-semibold text-white">Momna Imtiaz</h2>
-                    <p className="text-xs text-slate-400">PKR 85,000/mo budget layout</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-2 border-t border-slate-800/60 pt-4">
-                  {PREDICTIONS.map((p, idx) => (
-                    <div key={idx} className="text-center bg-[#0b1329]/40 py-2 rounded-lg border border-slate-900">
-                      <p className="text-[10px] text-emerald-400 font-semibold">{p.month}</p>
-                      <p className="text-xs font-bold text-white mt-0.5">{p.status}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-[11px] text-slate-400 mt-3">Spending aligned with your PKR 85,000/mo budget plan. Forecast trend remains fully stable.</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-[#131c35] border border-slate-800/80 p-4 rounded-xl">
-                  <p className="text-[11px] text-slate-400 uppercase font-medium tracking-wider">Total Spent</p>
-                  <p className="text-xl font-bold text-white mt-1">{fmt(totalSpent)}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">{expenses.length} transaction logs recorded</p>
-                </div>
-                <div className="bg-[#131c35] border border-slate-800/80 p-4 rounded-xl">
-                  <p className="text-[11px] text-slate-400 uppercase font-medium tracking-wider">Monthly Budget</p>
-                  <p className="text-xl font-bold text-white mt-1">{fmt(MONTHLY_BUDGET)}</p>
-                  <p className="text-[10px] text-emerald-400 mt-0.5">100% Core system allocation</p>
-                </div>
-                <div className="bg-[#131c35] border border-slate-800/80 p-4 rounded-xl">
-                  <p className="text-[11px] text-slate-400 uppercase font-medium tracking-wider">Remaining Balance</p>
-                  <p className="text-xl font-bold text-emerald-400 mt-1">{fmt(headroom)}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">Available liquidity sync safe</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Add Expense</h3>
-                  <form onSubmit={handleAddExpense} className="space-y-3">
-                    <div>
-                      <input 
-                        type="number" 
-                        value={amount} 
-                        onChange={e => setAmount(e.target.value)} 
-                        className="w-full bg-[#0b1329] border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" 
-                        placeholder="Amount (PKR)" 
-                        required 
-                      />
-                    </div>
-                    <div>
-                      <select 
-                        value={category} 
-                        onChange={e => setCategory(e.target.value)} 
-                        className="w-full bg-[#0b1329] border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-slate-300"
-                      >
-                        {Object.keys(categoryBreakdown).map(k => (
-                          <option key={k} value={k}>{categoryBreakdown[k].label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <input 
-                        type="text" 
-                        value={description} 
-                        onChange={e => setDescription(e.target.value)} 
-                        className="w-full bg-[#0b1329] border border-slate-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-emerald-500 text-white" 
-                        placeholder="Description" 
-                        required 
-                      />
-                    </div>
-                    <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold py-2 rounded-lg transition-colors mt-1">
-                      Add expense
-                    </button>
-                  </form>
-                  <p className="text-[10px] text-slate-500 mt-3 text-center">
-                    {fmt(headroom)} remaining of your PKR 85,000 budget matrix.
-                  </p>
-                </div>
-
-                <div className="bg-[#131c35] border border-slate-800/80 rounded-xl p-5 flex flex-col h-[245px]">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Recent Expenses</h3>
-                  <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin pr-1">
-                    {expenses.map((exp) => {
-                      const meta = categoryBreakdown[exp.category] || categoryBreakdown.other;
-                      return (
-                        <div key={exp.id} className="bg-[#0b1329]/60 border border-slate-900/60 p-2.5 rounded-lg flex justify-between items-center text-xs">
-                          <div>
-                            <p className="font-semibold text-slate-200">{exp.description}</p>
-                            <span className={`text-[9px] px-2 py-0.5 rounded font-medium inline-block mt-1 ${meta.bg}`} style={{ color: meta.color }}>
-                              {meta.label}
-                            </span>
-                          </div>
-                          <p className="font-bold text-white">-{fmt(exp.amount)}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <DynamicDonutChart breakdown={categoryBreakdown} />
-            </div>
-
-            <div className="lg:col-span-1">
-              <Chatbot totalSpent={totalSpent} />
-            </div>
-          </main>
+    <div>
+      <div class="card">
+        <h2>Add expense</h2>
+        <div class="field">
+          <label>Amount (PKR)</label>
+          <input type="number" id="amtInput" placeholder="e.g. 2500">
         </div>
-      );
-    }
+        <div class="field">
+          <label>Category</label>
+          <select id="catInput">
+            <option>Housing</option><option>Utilities</option><option>Food</option>
+            <option>Transport</option><option>Health</option><option>Shopping</option>
+            <option selected>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input type="text" id="descInput" placeholder="What was this for?">
+        </div>
+        <button class="btn" id="addExpenseBtn">Add expense</button>
+        <div class="budget-left" id="budgetLeftTxt">PKR 12,600 remaining of your PKR 85,000 monthly budget</div>
+      </div>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+      <div class="card coach-card">
+        <div class="coach-head">
+          <div class="av">🤖</div>
+          <div class="htxt"><h2>AI Coach</h2><p>Alert Agent · live</p></div>
+        </div>
+        <div class="chat-scroll" id="chatScroll">
+          <div class="msg bot">Hi Momna! I'm your AI finance coach. Ask about spending, budgets, or forecasts.</div>
+        </div>
+        <div class="quick-row">
+          <div class="quick" data-q="What's my spending breakdown?">What's my spending breakdown?</div>
+          <div class="quick" data-q="Predict my expenses">Predict my expenses</div>
+          <div class="quick" data-q="How can I save more?">How can I save more?</div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Ask your coach…">
+          <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>FinanceAI · Custom Dashboard Build</footer>
+</div>
+
+<script>
+const BUDGET = 85000;
+let expenses = [
+  {name:"Weekly groceries", cat:"Food", amt:2500},
+  {name:"Petrol — fill-up", cat:"Transport", amt:4500},
+  {name:"Rent payment", cat:"Housing", amt:35000},
+  {name:"Electric bill", cat:"Utilities", amt:9500},
+  {name:"Internet bill", cat:"Utilities", amt:5500},
+  {name:"Pharmacy", cat:"Health", amt:3000},
+  {name:"Clothing", cat:"Shopping", amt:1400},
+  {name:"Mobile top-up", cat:"Other", amt:1000},
+];
+const CAT_COLORS = {
+  Housing:"#E8607A", Utilities:"#2C8FE0", Food:"#F4A93B",
+  Transport:"#3DDC97", Health:"#7C6FE0", Shopping:"#F06AA9", Other:"#7C8AA3"
+};
+
+function totalSpend(){return expenses.reduce((a,e)=>a+e.amt,0);}
+
+function render(){
+  const total = totalSpend();
+  document.querySelector('.stat .value').textContent = `PKR ${total.toLocaleString()}`;
+  document.querySelectorAll('.stat')[1].querySelector('.value').textContent = `PKR ${total.toLocaleString()}`;
+  const headroom = Math.max(BUDGET - total, 0);
+  document.querySelectorAll('.stat')[2].querySelector('.value').textContent = `PKR ${headroom.toLocaleString()}`;
+  document.getElementById('budgetLeftTxt').textContent = `PKR ${headroom.toLocaleString()} remaining of your PKR ${BUDGET.toLocaleString()} monthly budget`;
+
+  const byCat = {};
+  expenses.forEach(e => byCat[e.cat] = (byCat[e.cat]||0) + e.amt);
+  drawDonut(byCat, total);
+
+  const recentBox = document.getElementById('recentExpenses');
+  recentBox.innerHTML = expenses.slice(-4).reverse().map(e => `
+    <div class="expense-row">
+      <div>
+        <div class="ename">${e.name}</div>
+        <div class="etag" style="background:${CAT_COLORS[e.cat]}22; color:${CAT_COLORS[e.cat]}">${e.cat}</div>
+      </div>
+      <div class="eamt">PKR ${e.amt.toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+
+function drawDonut(byCat, total){
+  const svg = document.getElementById('donutSvg');
+  const legend = document.getElementById('legendBox');
+  const cx=85, cy=85, r=68, stroke=24;
+  let acc = -90;
+  let paths = '';
+  let legendHtml = '';
+  Object.entries(byCat).sort((a,b)=>b[1]-a[1]).forEach(([cat, amt])=>{
+    const frac = amt/total;
+    const deg = frac*360;
+    paths += arcPath(cx,cy,r,acc,acc+deg, CAT_COLORS[cat]||'#888');
+    acc += deg;
+    legendHtml += `<div class="legend-row"><span class="lkey"><span class="sw" style="background:${CAT_COLORS[cat]}"></span>${cat}</span><span class="lval">PKR ${amt.toLocaleString()}</span></div>`;
+  });
+  svg.innerHTML = paths + `<circle cx="${cx}" cy="${cy}" r="${r-stroke/2-2}" fill="#16243B"/>
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#7C8AA3" font-size="9" font-family="Inter">TOTAL</text>
+    <text x="${cx}" y="${cy+13}" text-anchor="middle" fill="#F5F7FA" font-size="14" font-weight="700" font-family="Space Grotesk">${(total/1000).toFixed(1)}k</text>`;
+  legend.innerHTML = legendHtml;
+}
+
+function arcPath(cx,cy,r,startDeg,endDeg,color){
+  const s = polar(cx,cy,r,startDeg), e = polar(cx,cy,r,endDeg);
+  const large = endDeg-startDeg > 180 ? 1 : 0;
+  return `<path d="M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y}" stroke="${color}" stroke-width="24" fill="none" stroke-linecap="butt"/>`;
+}
+function polar(cx,cy,r,deg){
+  const rad = deg*Math.PI/180;
+  return {x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad)};
+}
+
+document.getElementById('addExpenseBtn').addEventListener('click', ()=>{
+  const amt = parseFloat(document.getElementById('amtInput').value);
+  const cat = document.getElementById('catInput').value;
+  const desc = document.getElementById('descInput').value || 'Other expense';
+  if(!amt || amt<=0){ return; }
+  expenses.push({name:desc, cat, amt});
+  document.getElementById('amtInput').value='';
+  document.getElementById('descInput').value='';
+  render();
+  runPipeline(`New ${cat.toLowerCase()} expense of PKR ${amt.toLocaleString()} processed.`);
+});
+
+const pipeStatuses = [
+  "Aggregation Agent syncing accounts…",
+  "Budget Agent categorizing transactions…",
+  "Savings Agent updating goal progress…",
+  "Investment Agent reviewing portfolio fit…",
+  "Alert Agent scanning for anomalies…"
+];
+let pipeStep = 0;
+function runPipeline(customMsg){
+  const nodes = document.querySelectorAll('.node');
+  const fill = document.getElementById('pipeFill');
+  const status = document.getElementById('pipeStatus');
+  nodes.forEach(n=>n.classList.remove('active'));
+  pipeStep = 0;
+  fill.style.width = '0%';
+
+  function step(){
+    if(pipeStep >= nodes.length){
+      if(customMsg) status.textContent = customMsg;
+      return;
+    }
+    nodes.forEach(n=>n.classList.remove('active'));
+    nodes[pipeStep].classList.add('active');
+    fill.style.width = `${(pipeStep/(nodes.length-1))*100}%`;
+    status.textContent = pipeStatuses[pipeStep];
+    pipeStep++;
+    setTimeout(step, 800);
+  }
+  step();
+}
+
+// Chat logic
+const responses = {
+  "What's my spending breakdown?": "Your highest expense is Housing (PKR 35,000), followed by Utilities and Petrol. You have PKR 12,600 left in your budget.",
+  "Predict my expenses": "Based on current trends, your next month spending is projected at PKR 78,000, which stays safely within budget headroom.",
+  "How can I save more?": "Try optimizing your Utilities and Shopping categories. Saving just 10% more there will add PKR 1,500 to your monthly headroom."
+};
+
+function addMessage(text, sender) {
+  const scroll = document.getElementById('chatScroll');
+  const div = document.createElement('div');
+  div.className = `msg ${sender}`;
+  div.textContent = text;
+  scroll.appendChild(div);
+  scroll.scrollTop = scroll.scrollHeight;
+}
+
+document.querySelectorAll('.quick').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const q = btn.getAttribute('data-q');
+    addMessage(q, 'user');
+    setTimeout(() => {
+      addMessage(responses[q] || "I am analyzing your data to give the best advice.", 'bot');
+    }, 600);
+  });
+});
+
+document.getElementById('sendBtn').addEventListener('click', () => {
+  const input = document.getElementById('chatInput');
+  const val = input.value.trim();
+  if(!val) return;
+  addMessage(val, 'user');
+  input.value = '';
+  setTimeout(() => {
+    addMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'bot');
+  }, 600);
+});
+
+// Initial run
+render();
+runPipeline();
+</script>
 </body>
 </html>
