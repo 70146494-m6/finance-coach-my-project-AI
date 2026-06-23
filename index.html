@@ -265,9 +265,17 @@ async function handleSendMessage(userMessage) {
     if (typeof appendMessage === "function") {
         appendMessage(userMessage, 'user');
     }
+// --- CHAT AGENT INTEGRATION (VERCEL BACKEND PIPELINE) ---
+async function handleSendMessage(userMessage) {
+    if (!userMessage || !userMessage.trim()) return;
+
+    // 1. User ka message screen par dikhayein
+    if (typeof appendMessage === "function") {
+        appendMessage(userMessage, 'user');
+    }
 
     try {
-        // 2. Vercel Serverless Backend API ko connect karein
+        // 2. Vercel Backend Serverless function ko call karein
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -276,26 +284,29 @@ async function handleSendMessage(userMessage) {
 
         const data = await response.json();
 
-        // 3. OpenAI ka dynamic reply display karein
+        // 3. OpenAI ka live dynamic reply display karein
         if (data && data.reply) {
             if (typeof appendMessage === "function") {
                 appendMessage(data.reply, 'assistant');
             }
         } else {
-            if (typeof appendMessage === "function") {
-                appendMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'assistant');
-            }
+            fallbackResponse();
         }
     } catch (error) {
         console.error("API Error:", error);
-        if (typeof appendMessage === "function") {
-            appendMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'assistant');
-        }
+        fallbackResponse();
     }
 }
 
-// --- EVENT LISTENERS (CLICK & ENTER KEY) ---
-if (sendBtn && chatInput) {
+// Fallback dynamic responses block
+function fallbackResponse() {
+    if (typeof appendMessage === "function") {
+        appendMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'assistant');
+    }
+}
+
+// --- EVENT LISTENERS (CLICK & ENTER KEY MANAGEMENT) ---
+if (typeof sendBtn !== 'undefined' && typeof chatInput !== 'undefined') {
     sendBtn.addEventListener('click', () => {
         handleSendMessage(chatInput.value);
         chatInput.value = '';
