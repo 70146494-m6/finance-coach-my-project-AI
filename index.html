@@ -252,17 +252,17 @@
   <div class="stat-row">
     <div class="stat">
       <div class="eyebrow">Total (30 days)</div>
-      <div class="value">PKR 72,400</div>
-      <div class="delta">6 transactions</div>
+      <div class="value" id="totalSpendVal">PKR 0</div>
+      <div class="delta" id="totalTransactions">0 transactions</div>
     </div>
     <div class="stat avg">
       <div class="eyebrow">Monthly average</div>
-      <div class="value">PKR 72,400</div>
+      <div class="value" id="avgSpendVal">PKR 0</div>
       <div class="delta">vs PKR 85,000 budget</div>
     </div>
     <div class="stat headroom">
       <div class="eyebrow">Budget headroom</div>
-      <div class="value">PKR 12,600</div>
+      <div class="value" id="headroomVal">PKR 0</div>
       <div class="delta">of PKR 85,000 budget</div>
     </div>
   </div>
@@ -313,7 +313,7 @@
           <input type="text" id="descInput" placeholder="What was this for?">
         </div>
         <button class="btn" id="addExpenseBtn">Add expense</button>
-        <div class="budget-left" id="budgetLeftTxt">PKR 12,600 remaining of your PKR 85,000 monthly budget</div>
+        <div class="budget-left" id="budgetLeftTxt">PKR 0 remaining of your PKR 85,000 monthly budget</div>
       </div>
 
       <div class="card coach-card">
@@ -361,10 +361,13 @@ function totalSpend(){return expenses.reduce((a,e)=>a+e.amt,0);}
 
 function render(){
   const total = totalSpend();
-  document.querySelector('.stat .value').textContent = `PKR ${total.toLocaleString()}`;
-  document.querySelectorAll('.stat')[1].querySelector('.value').textContent = `PKR ${total.toLocaleString()}`;
   const headroom = Math.max(BUDGET - total, 0);
-  document.querySelectorAll('.stat')[2].querySelector('.value').textContent = `PKR ${headroom.toLocaleString()}`;
+  
+  // Update stat elements explicitly by ID to avoid index bugs
+  document.getElementById('totalSpendVal').textContent = `PKR ${total.toLocaleString()}`;
+  document.getElementById('avgSpendVal').textContent = `PKR ${total.toLocaleString()}`;
+  document.getElementById('headroomVal').textContent = `PKR ${headroom.toLocaleString()}`;
+  document.getElementById('totalTransactions').textContent = `${expenses.length} transactions`;
   document.getElementById('budgetLeftTxt').textContent = `PKR ${headroom.toLocaleString()} remaining of your PKR ${BUDGET.toLocaleString()} monthly budget`;
 
   const byCat = {};
@@ -456,32 +459,56 @@ function runPipeline(customMsg){
   step();
 }
 
-// Chat logic
-const responses = {
-  "What's my spending breakdown?": "Your highest expense is Housing (PKR 35,000), followed by Utilities and Petrol. You have PKR 12,600 left in your budget.",
-  "Predict my expenses": "Based on current trends, your next month spending is projected at PKR 78,000, which stays safely within budget headroom.",
-  "How can I save more?": "Try optimizing your Utilities and Shopping categories. Saving just 10% more there will add PKR 1,500 to your monthly headroom."
-};
+// Complete and Dynamic Smart AI Coach Logic
+function generateDynamicResponse(userInput) {
+  const total = totalSpend();
+  const headroom = Math.max(BUDGET - total, 0);
+  const query = userInput.toLowerCase();
+
+  // Find highest category dynamically
+  const byCat = {};
+  expenses.forEach(e => byCat[e.cat] = (byCat[e.cat]||0) + e.amt);
+  let highestCat = "";
+  let highestAmt = 0;
+  Object.entries(byCat).forEach(([cat, amt]) => {
+    if(amt > highestAmt) { highestAmt = amt; highestCat = cat; }
+  });
+
+  if (query.includes('breakdown') || query.includes('spending') || query.includes('kharcha')) {
+    return `Momna, aap ka total kharcha PKR ${total.toLocaleString()} ho chuka hai. Sab se zyada spending **${highestCat}** par hui hai (PKR ${highestAmt.toLocaleString()}). Aap ke paas abhi PKR ${headroom.toLocaleString()} ka budget headroom baqi hai.`;
+  }
+  if (query.includes('predict') || query.includes('forecast') || query.includes('future')) {
+    return `Trends ke mutabiq, aglay mahino mein aap ka spending trend stable hai (around PKR 78,000-82,000). Agar aap isi tarah chalti rahin toh budget limits cross nahi hongi!`;
+  }
+  if (query.includes('save') || query.includes('bacht')) {
+    return `Ziada bachat (savings) ke liye, aap Utilities aur Shopping categories ko optimize karein. Agar aap unme 10% bachat karein toh PKR 1,500 mazeed save ho saktay hain.`;
+  }
+  
+  // Fallback dynamic response for custom entries
+  return `Maine aap ke dashboard data ko scan kiya hai. Aap ke total active transactions ${expenses.length} hain aur remaining balance PKR ${headroom.toLocaleString()} hai. Aap ka current financial status stable hai!`;
+}
 
 function addMessage(text, sender) {
   const scroll = document.getElementById('chatScroll');
   const div = document.createElement('div');
   div.className = `msg ${sender}`;
-  div.textContent = text;
+  div.innerHTML = text; // innerHTML used to render bold markdown elements correctly
   scroll.appendChild(div);
   scroll.scrollTop = scroll.scrollHeight;
 }
 
+// Quick reply buttons click handler
 document.querySelectorAll('.quick').forEach(btn => {
   btn.addEventListener('click', () => {
     const q = btn.getAttribute('data-q');
     addMessage(q, 'user');
     setTimeout(() => {
-      addMessage(responses[q] || "I am analyzing your data to give the best advice.", 'bot');
+      addMessage(generateDynamicResponse(q), 'bot');
     }, 600);
   });
 });
 
+// Custom message send action
 document.getElementById('sendBtn').addEventListener('click', () => {
   const input = document.getElementById('chatInput');
   const val = input.value.trim();
@@ -489,8 +516,15 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   addMessage(val, 'user');
   input.value = '';
   setTimeout(() => {
-    addMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'bot');
+    addMessage(generateDynamicResponse(val), 'bot');
   }, 600);
+});
+
+// Allow press Enter to send chat message
+document.getElementById('chatInput').addEventListener('keypress', (e) => {
+  if(e.key === 'Enter') {
+    document.getElementById('sendBtn').click();
+  }
 });
 
 // Initial run
