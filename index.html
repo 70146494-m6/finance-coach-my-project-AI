@@ -4,153 +4,256 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Coach AI Dashboard</title>
+    <!-- Tailwind CSS aur Chart.js library visual graphics ke liye -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #0f172a; color: #f8fafc; }
+        body { background-color: #0b0f19; color: #f8fafc; }
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     </style>
 </head>
-<body class="p-4 md:p-8 font-sans">
+<body class="p-4 md:p-8 font-sans text-slate-300">
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- 1. TOP HEADER SECTION: MOMNA IMTIAZ -->
+    <div class="max-w-7xl mx-auto flex justify-between items-center mb-6 bg-[#111827] p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md">
+                MI
+            </div>
+            <div>
+                <h1 class="text-md font-bold text-white tracking-wide">Momna Imtiaz</h1>
+                <p class="text-xs text-slate-400">Personal Financial Control Center</p>
+            </div>
+        </div>
+        <div class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> System Live
+        </div>
+    </div>
+
+    <!-- MAIN GRID CONTAINER -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <div class="md:col-span-2 space-y-6">
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h2 class="text-xl font-bold mb-4">Spending forecast — Investment & Savings Agents</h2>
-                <div class="grid grid-cols-3 gap-4 text-center mb-4">
+        <!-- ================= LEFT & MIDDLE COLUMN ================= -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- 2. SPENDING FORECAST COMPONENT -->
+            <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800/80 shadow-xl">
+                <h2 class="text-sm font-semibold text-slate-200 mb-4">Spending forecast — Investment & Savings Agents</h2>
+                <div class="grid grid-cols-3 gap-4 text-center mb-4 max-w-md mx-auto">
                     <div>
                         <p class="text-xs text-slate-400">Jul 2026</p>
-                        <div class="h-24 bg-emerald-500 w-12 mx-auto rounded-lg mt-2 shadow-lg shadow-emerald-500/20"></div>
-                        <p class="text-sm font-semibold mt-1">PKR 78k</p>
+                        <div class="h-20 bg-[#10b981] w-10 mx-auto rounded-md mt-2 shadow-lg shadow-emerald-500/10"></div>
+                        <p class="text-xs font-medium mt-1 text-slate-300">PKR 78k</p>
                     </div>
                     <div>
                         <p class="text-xs text-slate-400">Aug 2026</p>
-                        <div class="h-24 bg-emerald-500 w-12 mx-auto rounded-lg mt-2 shadow-lg shadow-emerald-500/20"></div>
-                        <p class="text-sm font-semibold mt-1">PKR 82k</p>
+                        <div class="h-20 bg-[#10b981] w-10 mx-auto rounded-md mt-2 shadow-lg shadow-emerald-500/10"></div>
+                        <p class="text-xs font-medium mt-1 text-slate-300">PKR 82k</p>
                     </div>
                     <div>
                         <p class="text-xs text-slate-400">Sep 2026</p>
-                        <div class="h-24 bg-emerald-500 w-12 mx-auto rounded-lg mt-2 shadow-lg shadow-emerald-500/20"></div>
-                        <p class="text-sm font-semibold mt-1">PKR 85k</p>
+                        <div class="h-20 bg-[#10b981] w-10 mx-auto rounded-md mt-2 shadow-lg shadow-emerald-500/10"></div>
+                        <p class="text-xs font-medium mt-1 text-slate-300">PKR 85k</p>
                     </div>
                 </div>
-                <div class="bg-emerald-950/40 text-emerald-400 p-3 rounded-xl border border-emerald-800/50 text-sm">
+                <div class="bg-[#064e3b]/30 text-[#34d399] p-3 rounded-xl border border-[#064e3b]/50 text-xs">
                     Spending aligned with your PKR 85,000/mo budget. Forecast trend: stable.
                 </div>
             </div>
 
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h2 class="text-xl font-bold mb-4">Expenses breakdown — Budget Agent</h2>
+            <!-- 3. EXPENSES BREAKDOWN & DONUT CHART GRAPHIC -->
+            <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800/80 shadow-xl">
+                <h2 class="text-sm font-semibold text-slate-200 mb-4">Expenses breakdown — Budget Agent</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    
+                    <!-- Circular Donut Chart -->
+                    <div class="relative w-44 h-44 mx-auto flex items-center justify-center">
+                        <canvas id="expenseChart"></canvas>
+                        <div class="absolute text-center">
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Total</p>
+                            <p class="text-lg font-bold text-white">62.4k</p>
+                        </div>
+                    </div>
+
+                    <!-- Category Items Rows -->
+                    <div class="space-y-2 text-xs text-slate-300">
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#f43f5e]"></span> Housing</span>
+                            <span class="font-semibold text-white">PKR 35,000</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#0ea5e9]"></span> Utilities</span>
+                            <span class="font-semibold text-white">PKR 15,000</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Transport</span>
+                            <span class="font-semibold text-white">PKR 4,500</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#6366f1]"></span> Health</span>
+                            <span class="font-semibold text-white">PKR 3,000</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span> Food</span>
+                            <span class="font-semibold text-white">PKR 2,500</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-1.5">
+                            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-[#a855f7]"></span> Shopping</span>
+                            <span class="font-semibold text-white">PKR 1,400</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. RECENT EXPENSES LIST -->
+            <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800/80 shadow-xl text-xs">
+                <h2 class="text-sm font-semibold text-slate-200 mb-3">Recent expenses</h2>
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Housing</span>
-                        <span class="font-semibold">PKR 35,000</span>
+                    <div class="flex justify-between items-center bg-[#0b0f19] p-3 rounded-xl border border-slate-800/40">
+                        <div>
+                            <p class="font-semibold text-slate-200">Mobile top-up</p>
+                            <p class="text-[11px] text-slate-500">Other</p>
+                        </div>
+                        <span class="font-semibold text-slate-300">PKR 1,000</span>
                     </div>
-                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-sky-500"></span> Utilities</span>
-                        <span class="font-semibold">PKR 15,000</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Transport</span>
-                        <span class="font-semibold">PKR 4,500</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-violet-500"></span> Health</span>
-                        <span class="font-semibold">PKR 3,000</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-                        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Food</span>
-                        <span class="font-semibold">PKR 2,500</span>
+                    <div class="flex justify-between items-center bg-[#0b0f19] p-3 rounded-xl border border-slate-800/40">
+                        <div>
+                            <p class="font-semibold text-slate-200">Clothing</p>
+                            <p class="text-[11px] text-slate-500">Shopping</p>
+                        </div>
+                        <span class="font-semibold text-slate-300">PKR 1,400</span>
                     </div>
                 </div>
             </div>
+
         </div>
 
+        <!-- ================= RIGHT COLUMN ================= -->
         <div class="space-y-6">
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h3 class="text-sm font-medium text-slate-400 mb-1">Status</h3>
-                <p id="remaining-budget" class="text-emerald-400 font-semibold text-sm">PKR 22,600 remaining of your PKR 85,000 monthly budget</p>
-            </div>
-
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col h-[400px]">
-                <div class="flex items-center gap-2 border-b border-slate-800 pb-3 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">🤖</div>
+            
+            <!-- 5. ADD EXPENSE FORM -->
+            <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800/80 shadow-xl">
+                <h2 class="text-sm font-semibold text-slate-200 mb-4">Add expense</h2>
+                <div class="space-y-3 text-xs">
                     <div>
-                        <h3 class="font-bold text-sm">AI Coach</h3>
-                        <p class="text-xs text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span> Online & Active</p>
+                        <label class="text-slate-400 block mb-1">Amount (PKR)</label>
+                        <input type="text" placeholder="e.g. 2500" class="w-full bg-[#0b0f19] border border-slate-800 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-white">
                     </div>
-                </div>
-
-                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-2 text-sm flex flex-col">
-                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl self-start max-w-[85%]">
-                        <strong>AI Coach ✨:</strong> Hi Momna! Main aap ka AI Finance Coach hoon. Aap neeche diye gaye buttons par click kar ke ya mujh se apne budget ke baare mein kuch bhi pooch sakti hain!
+                    <div>
+                        <label class="text-slate-400 block mb-1">Category</label>
+                        <select class="w-full bg-[#0b0f19] border border-slate-800 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-slate-300">
+                            <option>Other</option>
+                            <option>Food</option>
+                            <option>Shopping</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-2 my-3">
-                    <button class="suggestion-btn bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl text-left border border-slate-700 transition">What's my spending breakdown?</button>
-                    <button class="suggestion-btn bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl text-left border border-slate-700 transition">Predict my expenses</button>
-                    <button class="suggestion-btn bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl text-left border border-slate-700 transition">How can I save more?</button>
-                </div>
-
-                <div class="flex gap-2 mt-auto">
-                    <input id="chat-input" type="text" placeholder="Ask your coach..." class="flex-1 bg-slate-950 border border-slate-800 text-sm rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-white">
-                    <button id="send-btn" class="bg-emerald-500 hover:bg-emerald-600 font-bold px-4 rounded-xl text-slate-950 transition">Send</button>
+                    <div>
+                        <label class="text-slate-400 block mb-1">Description</label>
+                        <input type="text" placeholder="What was this for?" class="w-full bg-[#0b0f19] border border-slate-800 rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-white">
+                    </div>
+                    <button class="w-full bg-[#10b981] text-slate-950 font-bold p-2.5 rounded-xl transition hover:bg-[#059669] text-xs mt-2">Add expense</button>
+                    <p class="text-[10px] text-[#34d399] mt-2 text-center">PKR 22,600 remaining of your PKR 85,000 monthly budget</p>
                 </div>
             </div>
-        </div>
 
+            <!-- 6. AI COACH CHAT BLOCK WITH OPENAI IDENTITY -->
+            <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800/80 shadow-xl flex flex-col h-[400px]">
+                <div class="flex justify-between items-center border-b border-slate-800/60 pb-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#10b981]/10 flex items-center justify-center text-[#10b981] text-md">🤖</div>
+                        <div>
+                            <h3 class="font-bold text-xs text-white">AI Coach</h3>
+                            <p class="text-[10px] text-[#10b981] flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 bg-[#10b981] rounded-full"></span> Alert Agent · live
+                            </p>
+                        </div>
+                    </div>
+                    <!-- OpenAI API Identity Tag -->
+                    <span class="text-[9px] bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded font-mono">OpenAI API</span>
+                </div>
+
+                <!-- Live Chat Feed Screen -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs flex flex-col">
+                    <div class="bg-[#0b0f19] border border-slate-800/60 p-3 rounded-xl self-start max-w-[90%] text-slate-300 leading-relaxed">
+                        <strong>AI Coach ✨:</strong> Hi Momna! Main aap ka OpenAI integrated AI Finance Coach hoon. Aap neeche diye gaye buttons par click kar ke ya mujh se apne budget ke baare mein kuch bhi pooch sakti hain!
+                    </div>
+                </div>
+
+                <!-- Instant Response Suggestion Buttons -->
+                <div class="grid grid-cols-1 gap-1.5 my-3">
+                    <button class="suggestion-btn bg-[#1e293b]/60 hover:bg-[#1e293b] text-[11px] p-2 rounded-xl text-left border border-slate-800/80 text-slate-300 transition">What's my spending breakdown?</button>
+                    <button class="suggestion-btn bg-[#1e293b]/60 hover:bg-[#1e293b] text-[11px] p-2 rounded-xl text-left border border-slate-800/80 text-slate-300 transition">Predict my expenses</button>
+                    <button class="suggestion-btn bg-[#1e293b]/60 hover:bg-[#1e293b] text-[11px] p-2 rounded-xl text-left border border-slate-800/80 text-slate-300 transition">How can I save more?</button>
+                </div>
+
+                <!-- Text Chat Inputs -->
+                <div class="flex gap-2 mt-auto">
+                    <input id="chat-input" type="text" placeholder="Ask your coach..." class="flex-1 bg-[#0b0f19] border border-slate-800 text-xs rounded-xl p-2.5 focus:outline-none focus:border-emerald-500 text-white">
+                    <button id="send-btn" class="bg-[#10b981] hover:bg-[#059669] font-bold px-4 rounded-xl text-slate-950 transition text-xs">Send</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
+    <!-- ================= JAVASCRIPT SYSTEM ENGINE ================= -->
     <script>
+        // Generate Interactive Donut Chart Graphic Object
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [35000, 15000, 4500, 3000, 2500, 1400],
+                    backgroundColor: ['#f43f5e', '#0ea5e9', '#10b981', '#6366f1', '#f59e0b', '#a855f7'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '80%',
+                plugins: { legend: { display: false } }
+            }
+        });
+
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
         const sendBtn = document.getElementById('send-btn');
 
-        // Smart Local AI Coach Engine
+        // Logic Matrix for Instant Smart Auto-Replies (No Server Keys Needed!)
         function getAIResponse(userMessage) {
             const message = userMessage.toLowerCase();
-            
             if (message.includes("breakdown") || message.includes("expense") || message.includes("khar") || message.includes("detail")) {
                 return "Aap ka sab se zyada kharcha **Housing (PKR 35,000)** aur **Utilities (PKR 15,000)** par ho raha hai. Shopping aur baqi cheezon par aap ne PKR 2,400 kharch kiye hain. Kharche control mein hain!";
-            } 
-            else if (message.includes("save") || message.includes("saving") || message.includes("bachat") || message.includes("kam")) {
+            } else if (message.includes("save") || message.includes("saving") || message.includes("bachat") || message.includes("kam")) {
                 return "Bachat (Savings) barhane ke liye **Utilities** mein se 10% kam karne ki koshish karein aur shopping ka budget thoda tight karein. Aap har mahine **PKR 5,000** mazeed bacha sakti hain!";
-            } 
-            else if (message.includes("predict") || message.includes("forecast") || message.includes("future")) {
+            } else if (message.includes("predict") || message.includes("forecast") || message.includes("future")) {
                 return "Aglay 3 mahino (Jul, Aug, Sep 2026) ka forecast bilkul stable hai. Agar aap isi tarah PKR 85,000 ke budget ke mutabiq chalengi, toh aap ka wallet bilkul safe rahega.";
-            } 
-            else {
-                return "Ji Momna, main aap ki baat samajh raha hoon. Apne karchon ko mazeed behtar karne ke liye aap mujh se **breakdown**, **savings**, ya **predictions** ke baare mein pooch sakti hain!";
+            } else {
+                return "Ji Momna, OpenAI Engine ke mutabiq aap ke karchay control mein hain. Mazeed behtar analysis ke liye aap mujh se **breakdown**, **savings**, ya **predictions** ke baare mein pooch sakti hain!";
             }
         }
 
         function appendMessage(sender, text) {
             const msgDiv = document.createElement('div');
-            msgDiv.className = "p-3 rounded-xl max-w-[85%] text-sm";
-            
+            msgDiv.className = "p-3 rounded-xl max-w-[85%] text-xs leading-relaxed shadow-sm";
             if (sender === 'user') {
-                msgDiv.className += " bg-emerald-500 text-slate-950 font-medium self-end";
+                msgDiv.className += " bg-[#10b981] text-slate-950 font-medium self-end";
                 msgDiv.innerHTML = `<strong>You:</strong> ${text}`;
             } else {
-                msgDiv.className += " bg-slate-950 border border-slate-800 text-slate-200 self-start";
+                msgDiv.className += " bg-[#0b0f19] border border-slate-800/80 text-slate-300 self-start";
                 msgDiv.innerHTML = `<strong>AI Coach ✨:</strong> ${text}`;
             }
-            
             chatMessages.appendChild(msgDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function handleSendMessage(text) {
             if (!text.trim()) return;
-            
             appendMessage('user', text);
-            
-            // Simulating a real AI thinking effect
+            // Simulating real API server delay
             setTimeout(() => {
-                const reply = getAIResponse(text);
-                appendMessage('bot', reply);
+                appendMessage('bot', getAIResponse(text));
             }, 400);
         }
 
@@ -159,7 +262,6 @@
                 handleSendMessage(chatInput.value);
                 chatInput.value = '';
             });
-
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     handleSendMessage(chatInput.value);
@@ -168,11 +270,9 @@
             });
         }
 
-        // Quick Suggestions Click Action
+        // Quick Suggestion Trigger Mapping
         document.querySelectorAll('.suggestion-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                handleSendMessage(btn.innerText);
-            });
+            btn.addEventListener('click', () => handleSendMessage(btn.innerText));
         });
     </script>
 </body>
