@@ -257,14 +257,6 @@
             }, 400);
         }
 
-// --- CHAT AGENT INTEGRATION (REAL OPENAI FETCH) ---
-async function handleSendMessage(userMessage) {
-    if (!userMessage || !userMessage.trim()) return;
-
-    // 1. Screen par message add karein (Yeh pehle se bana hoga aapke paas)
-    if (typeof appendMessage === "function") {
-        appendMessage(userMessage, 'user');
-    }
 // --- CHAT AGENT INTEGRATION (VERCEL BACKEND PIPELINE) ---
 async function handleSendMessage(userMessage) {
     if (!userMessage || !userMessage.trim()) return;
@@ -326,6 +318,7 @@ document.querySelectorAll('.suggestion-btn').forEach(btn => {
         handleSendMessage(btn.innerText || btn.textContent);
     });
 });
+
     </script>
 </body>
 </html>
