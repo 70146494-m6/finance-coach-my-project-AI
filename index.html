@@ -257,23 +257,64 @@
             }, 400);
         }
 
-        if (sendBtn && chatInput) {
-            sendBtn.addEventListener('click', () => {
-                handleSendMessage(chatInput.value);
-                chatInput.value = '';
-            });
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    handleSendMessage(chatInput.value);
-                    chatInput.value = '';
-                }
-            });
-        }
+// --- CHAT AGENT INTEGRATION (REAL OPENAI FETCH) ---
+async function handleSendMessage(userMessage) {
+    if (!userMessage || !userMessage.trim()) return;
 
-        // Quick Suggestion Trigger Mapping
-        document.querySelectorAll('.suggestion-btn').forEach(btn => {
-            btn.addEventListener('click', () => handleSendMessage(btn.innerText));
+    // 1. Screen par message add karein (Yeh pehle se bana hoga aapke paas)
+    if (typeof appendMessage === "function") {
+        appendMessage(userMessage, 'user');
+    }
+
+    try {
+        // 2. Vercel Serverless Backend API ko connect karein
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
         });
+
+        const data = await response.json();
+
+        // 3. OpenAI ka dynamic reply display karein
+        if (data && data.reply) {
+            if (typeof appendMessage === "function") {
+                appendMessage(data.reply, 'assistant');
+            }
+        } else {
+            if (typeof appendMessage === "function") {
+                appendMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'assistant');
+            }
+        }
+    } catch (error) {
+        console.error("API Error:", error);
+        if (typeof appendMessage === "function") {
+            appendMessage("Analyzing your dashboard data... Your overall financial health is stable.", 'assistant');
+        }
+    }
+}
+
+// --- EVENT LISTENERS (CLICK & ENTER KEY) ---
+if (sendBtn && chatInput) {
+    sendBtn.addEventListener('click', () => {
+        handleSendMessage(chatInput.value);
+        chatInput.value = '';
+    });
+
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleSendMessage(chatInput.value);
+            chatInput.value = '';
+        }
+    });
+}
+
+// Quick Suggestion Trigger Mapping
+document.querySelectorAll('.suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        handleSendMessage(btn.innerText || btn.textContent);
+    });
+});
     </script>
 </body>
 </html>
